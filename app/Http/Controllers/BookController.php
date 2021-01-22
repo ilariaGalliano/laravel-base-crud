@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Book;
+use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
@@ -41,16 +42,18 @@ class BookController extends Controller
 
         // Validation
         $request->validate([
-            'title' => 'required|unique:books|max:10',
+            'title' => 'required|unique:books|max:30',
             'author' => 'required',
             'plot' => 'required'
         ]);
 
         // Save data on DB
         $book = new Book();
-        $book->title = $data['title'];
-        $book->author = $data['author'];
-        $book->plot = $data['plot'];
+        /* $book->title = $data['title'];
+        $book->author = $data['author'];+
+        $book->plot = $data['plot']; */
+
+        $book->fill($data);
 
         $saved = $book->save();
         //dd($saved);
@@ -83,7 +86,9 @@ class BookController extends Controller
      */
     public function edit($id)
     {
-        //
+        $book = Book::find($id);
+
+        return view ('books.edit' , compact('book'));
     }
 
     /**
@@ -95,7 +100,27 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Data from form 
+        $data = $request->all();
+        $book = Book::find($id);
+
+        // Validation 
+        $request->validate([
+            'title' =>[
+                'required',
+                Rule::unique('books')->ignore($id),
+                'max:30'
+            ],
+            'author' => 'required',
+            'plot' => 'required'
+        ]);
+
+        // Update data DB
+        $updated = $book->update($data);
+
+        if($updated){
+            return redirect()->route('books.show', $book->id);
+        }
     }
 
     /**
@@ -106,6 +131,13 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $book = Book::find($id);
+        $reference = $book->title;
+
+        $deleted=$book->delete();
+
+        if($deleted){
+            return redirect()->route('books.index')->with('deleted', $reference);
+        }
     }
 }

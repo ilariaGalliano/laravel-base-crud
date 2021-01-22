@@ -3,9 +3,22 @@
  @section('content')   
 
        <div class="container">
-            <h1 class="text-center mt-5 mb-5">Book list</h1>
+            <h1 class="text-center mt-5 mb-4">Book list</h1>
+            <h3 class="text-center mb-4">Welcome to my paradise of books. </h3>
 
-         <table class="table">
+            <p class="font-weight-bold mb-4 text-center">I've put together this list of books I think would be a good addition to your "To Read" list.
+                <br>
+                Do you have a favourite you'd like to recommend? 
+                If so, please click <a style="color: #058e24;" href="{{ route('books.index') }}">Here</a>. We'll be <a style="color: #058e24;"> SUPER HAPPY.</a>
+            </p>
+
+            @if (session('deleted'))
+                <div class="alert alert-danger">
+                    {{session('deleted')}} Successfully deleted
+                </div>
+            @endif
+
+         <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -25,12 +38,21 @@
                                 <a href="{{ route('books.show', $book->id)}}" class="btn btn-success mr-2">
                                     Info  
                                 </a>
-                                <a href="{{ route('books.show', $book->id)}}" class="btn btn-primary mr-2">
+                            </td>
+                            <td>
+                                <a href="{{ route('books.edit', $book->id)}}" class="btn btn-primary mr-2">
                                     Edit
                                 </a>
-                                <a href="{{ route('books.show', $book->id)}}" class="btn btn-danger">
-                                    Delete
-                                </a>
+                            </td>
+                            <td>
+                                <form action="{{ route('books.destroy', $book->id)}}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <input type="submit" class="btn btn-danger" value="Delete">
+
+                                </form>
+                                
                             </td>
                         </tr>
                     @endforeach

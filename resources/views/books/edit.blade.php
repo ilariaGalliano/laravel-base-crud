@@ -3,8 +3,7 @@
  @section('content')   
 
        <div class="container mt-5">
-           <h1 class="text-center mb-3">Add New Books:</h1>
-           <p class="mb-3"> And here <span style="color: #058e24;">ADD</span> few more books that you highly recommend:</p>
+           <h1 class="text-center mb-3">Edit Book: {{ $book->title }}:</h1>
 
            @if ($errors->any())
                 <div class="alert alert-danger">
@@ -18,24 +17,24 @@
 
 
 
-           <form action="{{ route('books.store') }}" method="POST">
+           <form action="{{ route('books.update',$book ->id) }}" method="POST">
                 @csrf
-                @method('POST')
+                @method('PATCH')
 
                 <div>
                     <label for="title">Book Title</label>
-                    <input class="form-control" type="text" name="title" value="{{ old('title') }}">
+                    <input class="form-control" type="text" name="title" value="{{ old('title', $book->title ) }}">
                 </div>
                 <div>
                     <label for="author">Author</label>
-                    <input class="form-control" type="text" name="author">
+                    <input class="form-control" type="text" name="author" value="{{ old('author', $book->author ) }}">
                 </div>
                 <div>
                     <label for="plot">Summary-Plot</label>
-                    <textarea class="form-control" name="plot">{{ old('plot') }}</textarea>
+                    <textarea class="form-control" name="plot">{{ old('plot', $book->plot) }}</textarea>
                 </div>
                 <div>
-                    <input class="btn btn-success mt-3" type="submit" value="Add">
+                    <input class="btn btn-success mt-3" type="submit" value="Edit">
                 </div>
            </form>
 
